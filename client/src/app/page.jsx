@@ -16,8 +16,10 @@ export default function Home() {
     salaryRange: [0, 5000000] 
   });
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   useEffect(() => {
-    axios.get('http://localhost:3001/jobs/') 
+    axios.get(`${apiUrl}/jobs/`) 
       .then((res) => {
         setJobs(res.data);
         setFilteredJobs(res.data);
@@ -25,7 +27,7 @@ export default function Home() {
       .catch((err) => {
         console.error('Failed to fetch jobs:', err);
       });
-  }, [jobs]);
+  }, []);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);

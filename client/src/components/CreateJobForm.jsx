@@ -29,6 +29,8 @@ const CreateJobForm = ({ onClose }) => {
     }));
   };
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   const allowedCompanies = [
     "WhatsApp",
     "Amazon",
@@ -52,7 +54,7 @@ const CreateJobForm = ({ onClose }) => {
         description: formData.jobDescription,
       };
 
-      const response = await axios.post("http://localhost:3001/jobs/", postData);
+      const response = await axios.post(`${apiUrl}/jobs/`, postData);
       
       console.log("Job created successfully:", response.data);
       onClose();
