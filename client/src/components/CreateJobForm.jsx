@@ -10,6 +10,8 @@ import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import dayjs from "dayjs";
 
+export const JOB_POSTED_EVENT = "job_posted";
+
 const CreateJobForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     jobTitle: "",
@@ -22,20 +24,19 @@ const CreateJobForm = ({ onClose }) => {
     jobDescription: "",
   });
 
-  const handleChange = (key, value) => {
+  const handleChange = (key, value) => {  
     setFormData((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const allowedCompanies = [
-    "WhatsApp",
     "Amazon",
-    "Apple",
-    "Facebook"
+    "Swiggy",
+    "Tesla"
   ];
 
   const handlePublish = async () => {
@@ -57,6 +58,12 @@ const CreateJobForm = ({ onClose }) => {
       const response = await axios.post(`${apiUrl}/jobs/`, postData);
       
       console.log("Job created successfully:", response.data);
+       
+      // Dispatch a custom event when job is posted successfully
+       window.dispatchEvent(new CustomEvent(JOB_POSTED_EVENT, { 
+        detail: response.data 
+      }));
+      
       onClose();
     } catch (error) {
       console.error("Error creating job:", error);

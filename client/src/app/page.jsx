@@ -3,73 +3,78 @@
 import { useEffect, useState } from 'react';
 import JobCard from '../components/JobCard';
 import SearchBar from '../components/SearchBar';
-import Topbar from '../components/Topbar';
 import axios from 'axios';
+import { JOB_POSTED_EVENT } from '../components/CreateJobForm';
 
 export default function Home() {
   const [jobs, setJobs] = useState({ data: [] });
-  const [filteredJobs, setFilteredJobs] = useState({ data: [] });
   const [filters, setFilters] = useState({
     jobTitle: '',
     location: '',
     jobType: '',
-    salaryRange: [0, 5000000] 
   });
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    axios.get(`${apiUrl}/jobs/`) 
-      .then((res) => {
-        setJobs(res.data);
-        setFilteredJobs(res.data);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch jobs:', err);
-      });
+    fetchJobs();
+    window.addEventListener(JOB_POSTED_EVENT, handleJobPosted);
+
+    return () => {
+      window.removeEventListener(JOB_POSTED_EVENT, handleJobPosted);
+    };
   }, []);
+
+  const handleJobPosted = () => {
+    console.log('New job posted, refreshing job list');
+    fetchJobs();
+  };
+
+  const fetchJobs = async (queryParams = '') => {
+    try {
+      const response = await axios.get(`${apiUrl}/jobs${queryParams}`);
+      setJobs(response.data);
+    } catch (err) {
+      console.error('Failed to fetch jobs:', err);
+    }
+  };
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    
-    if (jobs.data) {
-      const filtered = jobs.data.filter(job => {
-        if (newFilters.jobTitle && 
-            !job.title.toLowerCase().includes(newFilters.jobTitle.toLowerCase())) {
-          return false;
-        }
-        
-        if (newFilters.location && job.location !== newFilters.location) {
-          return false;
-        }
-        
-        if (newFilters.jobType && job.jobtype !== newFilters.jobType) {
-          return false;
-        }
-        
-        const jobMinSalary = job.min_salary || 0;
-        const jobMaxSalary = job.max_salary || 0;
-        
-        if (jobMaxSalary < newFilters.salaryRange[0] || 
-            jobMinSalary > newFilters.salaryRange[1]) {
-          return false;
-        }
-        
-        return true;
-      });
-      
-      setFilteredJobs({ data: filtered });
+
+    let queryParams = '/search?';
+    const params = [];
+
+    if (newFilters.jobTitle) {
+      params.push(`title=${encodeURIComponent(newFilters.jobTitle)}`);
+    }
+
+    if (newFilters.location) {
+      params.push(`location=${encodeURIComponent(newFilters.location)}`);
+    }
+
+    if (newFilters.jobType) {
+      params.push(`jobtype=${encodeURIComponent(newFilters.jobType)}`);
+    }
+
+    queryParams += params.join('&');
+
+    // If no filters are applied, get all jobs
+    if (params.length === 0) {
+      fetchJobs();
+    } else {
+      fetchJobs(queryParams);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main>
       <SearchBar onFilterChange={handleFilterChange} currentFilters={filters} />
-      
-      {filteredJobs.data && filteredJobs.data.length > 0 ? (
+
+      {jobs.data && jobs.data.length > 0 ? (
         <div className="mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mx-4 md:mx-24">
-            {filteredJobs.data.map((job, index) => (
+          <div className="grid grid-cols-1 gap-4 mx-4 md:grid-cols-2 xl:grid-cols-4 md:mx-24">
+            {jobs.data.map((job, index) => (
               <JobCard key={index} {...job} />
             ))}
           </div>

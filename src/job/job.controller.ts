@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { Job } from './job.entity';
+import { Query } from '@nestjs/common';
 
 @Controller('jobs')
 export class JobController {
@@ -30,6 +31,34 @@ export class JobController {
   @Get()
   async findAll() {
     const jobs = await this.jobService.findAll();
+    return {
+      success: true,
+      data: jobs,
+    };
+  }
+
+  // Move this route BEFORE the :id route
+  @Get('search')
+  async searchAndFilter(
+    @Query('title') title?: string,
+    @Query('min_salary') min_salary?: string,
+    @Query('max_salary') max_salary?: string,
+    @Query('jobtype') jobtype?: string,
+    @Query('location') location?: string,
+  ) {
+    const parsedMinSalary =
+      min_salary && !isNaN(+min_salary) ? Number(min_salary) : undefined;
+    const parsedMaxSalary =
+      max_salary && !isNaN(+max_salary) ? Number(max_salary) : undefined;
+
+    const jobs = await this.jobService.searchAndFilter({
+      title,
+      jobtype,
+      location,
+      min_salary: parsedMinSalary,
+      max_salary: parsedMaxSalary,
+    });
+
     return {
       success: true,
       data: jobs,

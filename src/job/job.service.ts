@@ -19,6 +19,46 @@ export class JobService {
     return await this.jobRepo.find();
   }
 
+  // job.service.ts
+  async searchAndFilter(query: {
+    title?: string;
+    min_salary?: number;
+    max_salary?: number;
+    jobtype?: string;
+    location?: string;
+  }) {
+    const qb = this.jobRepo.createQueryBuilder('job');
+
+    if (query.title) {
+      qb.andWhere('job.title ILIKE :title', { title: `%${query.title}%` });
+    }
+
+    if (query.jobtype) {
+      qb.andWhere('job.jobtype ILIKE :jobtype', { jobtype: `%${query.jobtype}%` });
+    }
+
+    if (query.location) {
+      qb.andWhere('job.location ILIKE :location', {
+        location: `%${query.location}%`,
+      });
+    }
+
+    if (query.min_salary !== undefined) {
+      qb.andWhere('job.min_salary >= :min_salary', {
+        min_salary: query.min_salary,
+      });
+    }
+
+    if (query.max_salary !== undefined) {
+      qb.andWhere('job.max_salary <= :max_salary', {
+        max_salary: query.max_salary,
+      });
+    }
+
+    const jobs = await qb.getMany();
+    return jobs;
+  }
+
   async findOne(id: number) {
     const job = await this.jobRepo.findOneBy({ id });
     if (!job) {
@@ -32,13 +72,13 @@ export class JobService {
     if (!existing) {
       throw new NotFoundException('Job not found');
     }
-    
+
     const updated = await this.jobRepo.save({
       ...existing,
       ...job,
       id, // Ensure ID remains the same
     });
-    
+
     return updated;
   }
 

@@ -6,7 +6,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Topbar />
-        {children}</body>
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog } from '@mui/material';
+import { Button, Dialog } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -13,43 +13,57 @@ const Topbar = () => {
   return (
     <>
       <nav className="p-2">
-        <div className="flex items-center justify-center space-x-8 p-4 mx-auto w-fit rounded-4xl shadow-lg text-black">
-          <img
-            className="h-8 w-auto"
-            src="/assets/company-logos/cyberminds.jpeg"
-            alt="Your Company"
+        <div className="flex items-center justify-center space-x-8 py-4 px-6 mx-auto w-fit rounded-4xl shadow-sm font-normal text-[600] text-[16px]">
+          <Image
+            className="h-10 w-auto"
+            width={30}
+            height={30}
+            src="/assets/company-logos/cyberminds.svg"
+            alt="cyberminds"
           />
           <a
             href="#"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-[#fae8e8]"
+            className="rounded-md px-3 py-2 hover:bg-[#fae8e8]"
             aria-current="page"
           >
             Home
           </a>
           <a
             href="#"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-[#fae8e8] "
+            className="rounded-md px-3 py-2 hover:bg-[#fae8e8] "
           >
             Find Jobs
           </a>
           <a
             href="#"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-[#fae8e8] "
+            className="rounded-md px-3 py-2 hover:bg-[#fae8e8] "
           >
             Find Talents
           </a>
           <a
             href="#"
-            className="rounded-md px-3 py-2 text-sm font-medium hover:bg-[#fae8e8]"
+            className="rounded-md px-3 py-2 hover:bg-[#fae8e8]"
+          >
+            About us
+          </a>
+          <a
+            href="#"
+            className="rounded-md px-3 py-2 hover:bg-[#fae8e8]"
           >
             Testimonials
           </a>
-          <button
-            className="rounded-3xl bg-[#7e13d3] px-3 py-1 text-white"
+          <Button
+            sx={{
+              borderRadius: '30px',
+              padding: '8px 24px',
+              textTransform: 'none',
+              color: 'white',
+              background: 'linear-gradient(180deg, #A128FF 0%, #6100AD 100%)',
+            }}
             onClick={handleToggle}
           >
             Create Jobs
-          </button>
+          </Button>
         </div>
       </nav>
 
@@ -60,7 +74,7 @@ const Topbar = () => {
         sx={{
           '& .MuiPaper-root': {
             borderRadius: '20px',
-            maxHeight: 'none', 
+            maxHeight: 'none',
           },
         }}
       >

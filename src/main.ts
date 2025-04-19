@@ -6,12 +6,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000', 
+    origin: process.env.FRONTEND_URL, 
     credentials: true,
   });
 
 
-  const port = process.env.PORT || 3000; 
+  const port = process.env.PORT; 
   await app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
