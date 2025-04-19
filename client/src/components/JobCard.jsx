@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 // Company logos remain in their current folder since they're company specific
 const companyLogos = {
   amazon: '/assets/company-logos/amazon.svg',
-  tesla: '/assets/company-logos/tesla.svg',
+  tesla: '/assets/company-logos/Tesla.svg',
   swiggy: '/assets/company-logos/swiggy.svg',
   cyberminds: '/assets/company-logos/cyberminds.svg',
 };
